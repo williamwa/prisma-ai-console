@@ -12,19 +12,15 @@ AI-powered REPL console for Prisma ORM with natural language query generation
 - From your project directory, run:
 
 ```bash
-npx prisma-ai-console@latest
+npx prisma-ai-console
 ```
 
-- For setting a Prisma client path explicitly, use the `--client` or the `-c` flag
+- Optional flags:
+  - `--client` or `-c`: Set Prisma client path (default: `./node_modules/@prisma/client`)
+  - `--schema` or `-s`: Set schema file location for AI features (default: `./prisma/schema.prisma`)
 
 ```bash
-npx prisma-ai-console@latest -c ./node_modules/@prisma/client -s ./prisma/schema.prisma
-```
-
-- For specifying a custom schema file location (for AI features), use the `--schema` or `-s` flag
-
-```bash
-npx prisma-ai-console@latest -s ./prisma/schema.prisma
+npx prisma-ai-console -c ./node_modules/@prisma/client -s ./prisma/schema.prisma
 ```
 
 ## AI-Powered Query Generation 🤖
@@ -46,6 +42,8 @@ export ANTHROPIC_API_KEY=your-api-key-here
 export OPENROUTER_API_KEY=your-api-key-here
 export OPENROUTER_MODEL=anthropic/claude-3.5-sonnet  # Optional, defaults to claude-3.5-sonnet
 ```
+
+If multiple keys exist, OpenRouter will be used first, then OpenAI, then Anthropic.
 
 ### Examples
 
