@@ -1,6 +1,6 @@
 {
   "name": "prisma-ai-console",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI-powered REPL console for Prisma ORM with natural language query generation",
   "main": "app.js",
   "repository": {
