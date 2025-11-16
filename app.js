@@ -24,6 +24,6 @@ const replServer = repl.start({
 replServer.context.prisma = prisma;
 
 // Inject AI functions
-const { ai, run } = createAIFunction(clientPath, replServer, options?.schema);
+const { ai, run } = createAIFunction(replServer, options?.schema);
 replServer.context.ai = ai;
 replServer.context.run = run;

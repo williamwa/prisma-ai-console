@@ -4,40 +4,21 @@ const chalk = require("chalk");
 
 /**
  * Reads the Prisma schema file from the project
- * @param {string} clientPath - Path to the Prisma client
- * @param {string|null} customSchemaPath - Custom schema path from CLI option
+ * @param {string} schemaPath - Schema path from CLI option
  * @returns {string|null} - Schema content or null if not found
  */
-function readPrismaSchema(clientPath, customSchemaPath = null) {
+function readPrismaSchema(schemaPath) {
   try {
-    // If custom schema path is provided, try it first
-    if (customSchemaPath) {
-      const resolvedPath = path.isAbsolute(customSchemaPath)
-        ? customSchemaPath
-        : path.join(process.cwd(), customSchemaPath);
-      
-      if (fs.existsSync(resolvedPath)) {
-        return fs.readFileSync(resolvedPath, "utf-8");
-      } else {
-        console.error(`❌ Custom schema path not found: ${resolvedPath}`);
-        return null;
-      }
+    const resolvedPath = path.isAbsolute(schemaPath)
+      ? schemaPath
+      : path.join(process.cwd(), schemaPath);
+    
+    if (fs.existsSync(resolvedPath)) {
+      return fs.readFileSync(resolvedPath, "utf-8");
+    } else {
+      console.error(`❌ Schema file not found: ${resolvedPath}`);
+      return null;
     }
-
-    // Try common schema locations
-    const possiblePaths = [
-      path.join(process.cwd(), "prisma", "schema.prisma"),
-      path.join(process.cwd(), "prisma", "schema", "schema.prisma"),
-      path.join(clientPath, "..", "..", "prisma", "schema.prisma"),
-    ];
-
-    for (const schemaPath of possiblePaths) {
-      if (fs.existsSync(schemaPath)) {
-        return fs.readFileSync(schemaPath, "utf-8");
-      }
-    }
-
-    return null;
   } catch (error) {
     console.error("Error reading Prisma schema:", error.message);
     return null;
@@ -177,13 +158,12 @@ async function callLLM(prompt) {
 
 /**
  * Main AI function that generates Prisma commands
- * @param {string} clientPath - Path to the Prisma client
  * @param {object} replServer - REPL server instance for accessing context
- * @param {string|null} schemaPath - Custom schema path from CLI option
- * @returns {object} - Object with ai, run, and aiRun functions
+ * @param {string} schemaPath - Schema path from CLI option
+ * @returns {object} - Object with ai and run functions
  */
-function createAIFunction(clientPath, replServer, schemaPath = null) {
-  const schema = readPrismaSchema(clientPath, schemaPath);
+function createAIFunction(replServer, schemaPath) {
+  const schema = readPrismaSchema(schemaPath);
 
   if (!schema) {
     return {

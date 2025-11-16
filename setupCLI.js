@@ -15,7 +15,7 @@ const options = commandLineArgs([
     name: "schema",
     alias: "s",
     type: String,
-    defaultValue: null,
+    defaultValue: "./prisma/schema.prisma",
   },
   {
     name: "help",
