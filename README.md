@@ -4,7 +4,8 @@ AI-powered REPL console for Prisma ORM with natural language query generation
 
 ## Screenshot
 
-![Screenshot](./docs/screenshot.png)
+![Screenshot](./docs/prisma-console-1.png)
+![Screenshot](./docs/prisma-console-2.png)
 
 ## Usage
 
@@ -84,10 +85,11 @@ The AI automatically:
 - Generates accurate Prisma Client queries
 - Supports complex queries with relations, filters, and aggregations
 
-### Forget Prisma Studio! 🤣
-
-![Screenshot 2](./docs/screenshot2.png)
-
 ## Acknowledgments
 
 This project is built on top of [prisma-console](https://github.com/Kinjalrk2k/prisma-console) by Kinjal Raykarmakar. All the original REPL console features are still available, with AI-powered query generation added on top.
+
+Original console feature included:
+
+![Screenshot](./docs/screenshot.png)
+![Screenshot 2](./docs/screenshot2.png)
