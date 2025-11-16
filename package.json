@@ -1,11 +1,11 @@
 {
-  "name": "@prismatools/console",
-  "version": "1.1.0",
-  "description": "REPL style console for Prisma ORM, heavily inspired from Rails console",
+  "name": "prisma-ai-console",
+  "version": "1.0.0",
+  "description": "AI-powered REPL console for Prisma ORM with natural language query generation",
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kinjalrk2k/prisma-console.git"
+    "url": "git+https://github.com/williamwa/prisma-ai-console.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,7 @@
   "bin": {
     "console": "./app.js"
   },
-  "author": "Kinjal Raykarmakar",
+  "author": "William Wang",
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",
@@ -26,6 +26,10 @@
     "prisma",
     "console",
     "tool",
-    "prisma-orm"
+    "prisma-orm",
+    "ai",
+    "llm",
+    "natural-language",
+    "query-generation"
   ]
 }

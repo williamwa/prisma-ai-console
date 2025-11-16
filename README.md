@@ -1,6 +1,6 @@
-# @prismatools/console
+# prisma-ai-console
 
-Run Prisma Queries in a REPL style console. Heavily inspired by the Rails Console
+AI-powered REPL console for Prisma ORM with natural language query generation
 
 ## Screenshot
 
@@ -11,19 +11,19 @@ Run Prisma Queries in a REPL style console. Heavily inspired by the Rails Consol
 - From your project directory, run:
 
 ```bash
-npx @prismatools/console@latest
+npx prisma-ai-console@latest
 ```
 
 - For setting a Prisma client path explicitly, use the `--client` or the `-c` flag
 
 ```bash
-npx @prismatools/console@latest -c ./node_modules/@prisma/client -s ./prisma/schema.prisma
+npx prisma-ai-console@latest -c ./node_modules/@prisma/client -s ./prisma/schema.prisma
 ```
 
 - For specifying a custom schema file location (for AI features), use the `--schema` or `-s` flag
 
 ```bash
-npx @prismatools/console@latest -s ./prisma/schema.prisma
+npx prisma-ai-console@latest -s ./prisma/schema.prisma
 ```
 
 ## AI-Powered Query Generation 🤖
@@ -87,3 +87,7 @@ The AI automatically:
 ### Forget Prisma Studio! 🤣
 
 ![Screenshot 2](./docs/screenshot2.png)
+
+## Acknowledgments
+
+This project is built on top of [prisma-console](https://github.com/Kinjalrk2k/prisma-console) by Kinjal Raykarmakar. All the original REPL console features are still available, with AI-powered query generation added on top.
