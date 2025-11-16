@@ -1,13 +1,29 @@
 const fs = require("fs");
 const path = require("path");
+const chalk = require("chalk");
 
 /**
  * Reads the Prisma schema file from the project
  * @param {string} clientPath - Path to the Prisma client
+ * @param {string|null} customSchemaPath - Custom schema path from CLI option
  * @returns {string|null} - Schema content or null if not found
  */
-function readPrismaSchema(clientPath) {
+function readPrismaSchema(clientPath, customSchemaPath = null) {
   try {
+    // If custom schema path is provided, try it first
+    if (customSchemaPath) {
+      const resolvedPath = path.isAbsolute(customSchemaPath)
+        ? customSchemaPath
+        : path.join(process.cwd(), customSchemaPath);
+      
+      if (fs.existsSync(resolvedPath)) {
+        return fs.readFileSync(resolvedPath, "utf-8");
+      } else {
+        console.error(`❌ Custom schema path not found: ${resolvedPath}`);
+        return null;
+      }
+    }
+
     // Try common schema locations
     const possiblePaths = [
       path.join(process.cwd(), "prisma", "schema.prisma"),
@@ -47,12 +63,19 @@ USER REQUEST: ${userQuery}
 INSTRUCTIONS:
 - Return ONLY the Prisma command, no explanations
 - Use the prisma client instance (already available as 'prisma')
-- Format as executable JavaScript code
+- Format as executable JavaScript code with proper indentation
+- Use multi-line formatting for better readability
 - Include necessary options like 'include', 'select', 'where', etc.
 - Use async/await syntax with 'await'
 
 EXAMPLE OUTPUT FORMAT:
-await prisma.user.findMany({ where: { email: { contains: '@example.com' } } })
+await prisma.user.findMany({
+  where: {
+    email: {
+      contains: '@example.com'
+    }
+  }
+})
 
 Generate the command:`;
 }
@@ -156,10 +179,11 @@ async function callLLM(prompt) {
  * Main AI function that generates Prisma commands
  * @param {string} clientPath - Path to the Prisma client
  * @param {object} replServer - REPL server instance for accessing context
+ * @param {string|null} schemaPath - Custom schema path from CLI option
  * @returns {object} - Object with ai, run, and aiRun functions
  */
-function createAIFunction(clientPath, replServer) {
-  const schema = readPrismaSchema(clientPath);
+function createAIFunction(clientPath, replServer, schemaPath = null) {
+  const schema = readPrismaSchema(clientPath, schemaPath);
 
   if (!schema) {
     return {
@@ -168,17 +192,11 @@ function createAIFunction(clientPath, replServer) {
           "❌ Could not find Prisma schema. Please ensure schema.prisma exists in your project."
         );
       },
-      run: function run() {
-        console.error("❌ Schema not loaded");
-      },
-      aiRun: async function aiRun() {
+      run: async function run() {
         console.error("❌ Schema not loaded");
       },
     };
   }
-
-  // Store last command
-  let lastCommand = null;
 
   const ai = async function ai(query) {
     if (!query || typeof query !== "string") {
@@ -196,41 +214,20 @@ function createAIFunction(clientPath, replServer) {
       let cleanCommand = command
         .replace(/```javascript\n?/g, "")
         .replace(/```js\n?/g, "")
-        .replace(/```\n?/g, "")
         .trim();
 
       console.log("\n✨ Generated command:");
-      console.log(cleanCommand);
-      console.log("\n💡 Copy and paste to execute, or assign to a variable\n");
-
-      lastCommand = cleanCommand;
-      return cleanCommand;
+      console.log(chalk.cyan(cleanCommand));
+      console.log("\n💡 Copy and paste to execute\n");
     } catch (error) {
       console.error("❌ Error generating command:", error.message);
-      return null;
     }
   };
 
-  const run = function run() {
-    if (!lastCommand) {
-      console.error("❌ No command to run. Use ai('query') first.");
-      return;
-    }
-
-    try {
-      console.log(`🚀 Running: ${lastCommand}\n`);
-      // Use eval to execute the last command in the REPL context
-      return eval(lastCommand);
-    } catch (error) {
-      console.error("❌ Error running command:", error.message);
-      return null;
-    }
-  };
-
-  const aiRun = async function aiRun(query) {
+  const run = async function run(query) {
     if (!query || typeof query !== "string") {
-      console.log("Usage: aiRun('your natural language query')");
-      console.log("Example: aiRun('find all users with gmail addresses')");
+      console.log("Usage: run('your natural language query')");
+      console.log("Example: run('find all users with gmail addresses')");
       return;
     }
 
@@ -251,16 +248,28 @@ function createAIFunction(clientPath, replServer) {
 
       lastCommand = cleanCommand;
       
-      // Execute the command
-      const result = eval(cleanCommand);
-      return result;
+      // Execute the command using REPL eval for async support
+      if (replServer && replServer.eval) {
+        return new Promise((resolve, reject) => {
+          replServer.eval(cleanCommand, replServer.context, 'repl', (err, result) => {
+            if (err) {
+              console.error("❌ Error:", err.message);
+              resolve(null);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+      }
+      // Fallback to direct eval (won't support await)
+      return eval(cleanCommand);
     } catch (error) {
       console.error("❌ Error:", error.message);
       return null;
     }
   };
 
-  return { ai, run, aiRun };
+  return { ai, run };
 }
 
 module.exports = { createAIFunction };

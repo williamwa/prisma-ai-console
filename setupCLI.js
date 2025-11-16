@@ -12,6 +12,12 @@ const options = commandLineArgs([
     defaultValue: "./node_modules/@prisma/client",
   },
   {
+    name: "schema",
+    alias: "s",
+    type: String,
+    defaultValue: null,
+  },
+  {
     name: "help",
     alias: "h",
     type: Boolean,
@@ -41,6 +47,13 @@ const usage = commandLineUsage([
         typeLabel: "{underline path}",
         description: "Path to the Prisma generated client",
         defaultValue: path.join(__dirname, "./node_modules/@prisma/client"),
+      },
+      {
+        name: "schema",
+        alias: "s",
+        type: String,
+        typeLabel: "{underline path}",
+        description: "Path to the Prisma schema file (for AI features)",
       },
       {
         name: "help",

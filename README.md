@@ -17,7 +17,13 @@ npx @prismatools/console@latest
 - For setting a Prisma client path explicitly, use the `--client` or the `-c` flag
 
 ```bash
-npx @prismatools/console@latest -c ./node_modules/@prisma/client
+npx @prismatools/console@latest -c ./node_modules/@prisma/client -s ./prisma/schema.prisma
+```
+
+- For specifying a custom schema file location (for AI features), use the `--schema` or `-s` flag
+
+```bash
+npx @prismatools/console@latest -s ./prisma/schema.prisma
 ```
 
 ## AI-Powered Query Generation 🤖
@@ -43,21 +49,13 @@ export OPENROUTER_MODEL=anthropic/claude-3.5-sonnet  # Optional, defaults to cla
 ### Examples
 
 ```javascript
-// 1. ai(query) - Generate a Prisma command (returns text)
+// 1. ai(query) - Generate a Prisma command
 await ai('find all users with gmail addresses')
-// Returns: "await prisma.user.findMany({ where: { email: { contains: '@gmail.com' } } })"
+// Displays the command, copy and paste to execute
 
-// 2. run() - Execute the last generated command
-run()
-// Executes the command from the previous ai() call
-
-// 3. aiRun(query) - Generate and execute in one step
-await aiRun('get the top 10 most played songs with their artist names')
-// Generates the command and runs it immediately
-
-// Workflow example:
-await ai('find users created in last 7 days')  // Generate command
-run()                                           // Execute it
+// 2. run(query) - Generate and execute in one step
+await run('get the top 10 most played songs with their artist names')
+// Generates the command and runs it immediately, returns the result
 ```
 
 ### Example
@@ -74,11 +72,10 @@ await prisma.user.findMany({ where: { createdAt: { gte: new Date(Date.now() - 7 
 
 ### Features
 
-Three powerful commands:
+Two powerful commands:
 
 - **`ai(query)`** - Generate Prisma commands from natural language
-- **`run()`** - Execute the last generated command
-- **`aiRun(query)`** - Generate and execute in one step
+- **`run(query)`** - Generate and execute in one step
 
 The AI automatically:
 
