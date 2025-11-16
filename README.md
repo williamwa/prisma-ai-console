@@ -4,8 +4,8 @@ AI-powered REPL console for Prisma ORM with natural language query generation
 
 ## Screenshot
 
-![Screenshot](./docs/prisma-console-1.png)
-![Screenshot](./docs/prisma-console-2.png)
+![Screenshot](./docs/prisma-ai-console-1.png)
+![Screenshot](./docs/prisma-ai-console-2.png)
 
 ## Usage
 
