@@ -2,6 +2,7 @@
 const repl = require("pretty-repl");
 const path = require("path");
 const { options } = require("./setupCLI");
+const { createAIFunction } = require("./aiHelper");
 
 const { PrismaClient } = require(path.join(process.cwd(), options?.client));
 
@@ -16,3 +17,9 @@ const replServer = repl.start({
 });
 
 replServer.context.prisma = prisma;
+
+// Inject AI functions
+const { ai, run, aiRun } = createAIFunction(options?.client, replServer);
+replServer.context.ai = ai;
+replServer.context.run = run;
+replServer.context.aiRun = aiRun;
